@@ -4,7 +4,6 @@ This project is a Python API for banking transactions. It provides endpoints for
 
 ## Project Structure
 
-The project has the following files and directories:
 .
 ├── app/
 │   ├── __init__.py
@@ -36,6 +35,8 @@ The project has the following files and directories:
 ├── .gitignore
 └── README.md
 
+
+The project has the following files and directories:
 
 - `app/`: Contains the main application code.
   - `__init__.py`: Marks the `app` directory as a Python package.
