@@ -3,7 +3,7 @@
 This project is a Python API for banking transactions. It provides endpoints for managing bank accounts, loans, offers, and performing transactions.
 
 ## Project Structure
-
+```plaintext
 ├── app/
 │   ├── __init__.py
 │   ├── main.py
@@ -33,7 +33,7 @@ This project is a Python API for banking transactions. It provides endpoints for
 ├── requirements.txt
 ├── .gitignore
 └── README.md
-
+```
 
 The project has the following files and directories:
 
