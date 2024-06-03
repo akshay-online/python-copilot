@@ -4,7 +4,6 @@ This project is a Python API for banking transactions. It provides endpoints for
 
 ## Project Structure
 
-.
 ├── app/
 │   ├── __init__.py
 │   ├── main.py
