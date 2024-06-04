@@ -1,16 +1,18 @@
 from flask import Blueprint, request, jsonify
 from models.transaction import Transaction
+from services.deposit_service import DepositService
 from services.transaction_service import TransactionService
-from models.transaction import Transaction
+from services.withdrawal_service import WithdrawalService
 from flask import Blueprint, request, jsonify
 from models.transaction import Transaction
-from services.transaction_service import TransactionService
-from models.transaction import Transaction
+
 from flasgger import swag_from
 
 
 transaction_routes = Blueprint('transaction_routes', __name__)
 transaction_service = TransactionService()
+withdrawal_service = WithdrawalService()
+deposit_service = DepositService()
 
 @transaction_routes.route('/transactions', methods=['POST'])
 @swag_from({
@@ -129,65 +131,6 @@ def get_transaction(transaction_id):
     else:
         return jsonify({'message': 'Transaction not found'})
 
-# Mock data for testing purposes
-mock_transactions = [
-    {
-        'id': 1,
-        'account_number': '1234567890',
-        'amount': 100.0,
-        'type': 'deposit'
-    },
-    {
-        'id': 2,
-        'account_number': '0987654321',
-        'amount': 50.0,
-        'type': 'withdrawal'
-    }
-]
-
-@transaction_routes.route('/transactions/mock', methods=['GET'])
-@swag_from({
-    'tags': ['Transactions'],
-    'description': 'Get mock transactions for testing purposes',
-    'responses': {
-        '200': {
-            'description': 'List of mock transaction details',
-            'schema': {
-                'type': 'array',
-                'items': {
-                    'type': 'object',
-                    'properties': {
-                        'id': {
-                            'type': 'integer',
-                            'description': 'Transaction ID'
-                        },
-                        'account_number': {
-                            'type': 'string',
-                            'description': 'The account number'
-                        },
-                        'amount': {
-                            'type': 'number',
-                            'description': 'The transaction amount'
-                        },
-                        'type': {
-                            'type': 'string',
-                            'description': 'The transaction type'
-                        }
-                    }
-                }
-            }
-        }
-    }
-})
-def get_mock_transactions():
-    """
-    Get mock transactions for testing purposes.
-
-    Returns:
-        A JSON response with a list of mock transaction details.
-    """
-    return jsonify(mock_transactions)
-
 @transaction_routes.route('/transactions', methods=['GET'])
 @swag_from({
     'tags': ['Transactions'],
@@ -232,12 +175,6 @@ def get_mock_transactions():
     }
 })
 def list_transactions():
-    """
-    List all transactions.
-
-    Returns:
-        A JSON response with a list of transaction details.
-    """
     account_number = request.args.get('account_number')
     transactions = transaction_service.list_transactions(account_number)
     return jsonify([transaction.__dict__ for transaction in transactions])
@@ -291,7 +228,7 @@ def create_withdrawal():
     """
     data = request.get_json()
     transaction = Transaction(data['account_number'], data['amount'])
-    transaction_service.create_withdrawal(transaction)
+    withdrawal_service.create_withdrawal(transaction)
     return jsonify({'message': 'Withdrawal created successfully'})
 
 @transaction_routes.route('/transactions/deposit', methods=['POST'])
@@ -342,7 +279,7 @@ def create_deposit():
     """
     data = request.get_json()
     transaction = Transaction(data['account_number'], data['amount'])
-    transaction_service.create_deposit(transaction)
+    deposit_service.create_deposit(transaction)
     return jsonify({'message': 'Deposit created successfully'})
 
 @transaction_routes.route('/transactions/withdrawal/<transaction_id>', methods=['GET'])
@@ -407,7 +344,7 @@ def get_withdrawal(transaction_id):
     Returns:
         A JSON response with the withdrawal transaction details if found, or a message if not found.
     """
-    transaction = transaction_service.get_withdrawal(transaction_id)
+    transaction = withdrawal_service.get_withdrawal(transaction_id)
     if transaction:
         return jsonify(transaction.__dict__)
     else:
@@ -475,7 +412,7 @@ def get_deposit(transaction_id):
     Returns:
         A JSON response with the deposit transaction details if found, or a message if not found.
     """
-    transaction = transaction_service.get_deposit(transaction_id)
+    transaction = deposit_service.get_deposit(transaction_id)
     if transaction:
         return jsonify(transaction.__dict__)
     else:
@@ -532,7 +469,7 @@ def list_withdrawals():
         A JSON response with a list of withdrawal transaction details.
     """
     account_number = request.args.get('account_number')
-    transactions = transaction_service.list_withdrawals(account_number)
+    transactions = withdrawal_service.list_withdrawals(account_number)
     return jsonify([transaction.__dict__ for transaction in transactions])
 
 @transaction_routes.route('/transactions/deposit', methods=['GET'])
@@ -586,5 +523,5 @@ def list_deposits():
         A JSON response with a list of deposit transaction details.
     """
     account_number = request.args.get('account_number')
-    transactions = transaction_service.list_deposits(account_number)
+    transactions = deposit_service.list_deposits(account_number)
     return jsonify([transaction.__dict__ for transaction in transactions])
