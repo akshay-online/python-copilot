@@ -13,6 +13,7 @@ class offer:
         
     def get_all_offers(self):
         return self.offers
+    
     def get_offer(self, offer_id):
         for offer in self.offers:
             if offer["id"] == offer_id:

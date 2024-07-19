@@ -26,3 +26,14 @@ class AccountService:
         account.deposit(amount)  # or account.withdraw(amount)
         # Save the updated account to the database or perform any other necessary operations
         return account
+    
+    # delete account
+    def delete_account(self, account_number):
+        """
+        Delete the account with the given account number.
+        """
+        # Retrieve the account from the database or perform any other necessary operations
+        account = Account(account_number, balance)
+        # Delete the account from the database or perform any other necessary operations
+        return account
+    
