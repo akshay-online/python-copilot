@@ -9,3 +9,8 @@ DB_PASSWORD = 'banking_password'
 API_HOST = 'localhost'
 API_PORT = 5000
 DEBUG_MODE = True
+
+# Github configuration
+GITHUB_USERNAME = 'username'
+GITHUB_PASSWORD = 'password'
+GITHUB_PAT = 'ghp_1234567890abcdefghij1234567890abcdefghij'

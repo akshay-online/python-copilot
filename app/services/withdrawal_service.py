@@ -4,13 +4,13 @@ class WithdrawalService:
     
         def __init__(self) :
                 self.withdrawals = [
-                        {"id": 1, "account_number": "1234567890", "amount": 100.0},
-                        {"id": 2, "account_number": "0987654321", "amount": 200.0},
+                        {"id": 1, "account_number": "1234567890", "amount": 100.0, "type": "withdraw", "date": "2021-10-01"},
+                        {"id": 2, "account_number": "0987654321", "amount": 200.0, "type": "withdraw", "date": "2021-10-01"},
                 ]
 
         def create_withdrawal(self, account_number, amount):
                 # use the self.withdrawals list to create a new withdrawal transaction
-                withdrawal = {"id": len(self.withdrawals) + 1, "account_number": account_number, "amount": amount}
+                withdrawal = {"id": len(self.withdrawals) + 1, "account_number": account_number, "amount": amount, "type": "withdraw", "date": "2021-10-01"}
                 self.withdrawals.append(withdrawal)
 
         def get_withdrawal(self, transaction_id):
