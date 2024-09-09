@@ -1,4 +1,4 @@
-from models.account import Account
+from account import Account
 
 class AccountService:
     def create_account(self, account_number, balance):

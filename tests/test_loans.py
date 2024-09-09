@@ -1,6 +1,6 @@
 import unittest
 from app.services.loans_service import LoanService
-from models.loans import Loan
+from loans import Loan
 
 class TestLoanService(unittest.TestCase):
     def setUp(self):
