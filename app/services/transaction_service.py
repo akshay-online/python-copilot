@@ -1,24 +1,38 @@
-from models.transaction import Transaction
+# app/services/transaction_service.py
+from app.models.transaction import Transaction
 
 class TransactionService:
     def __init__(self):
-        # Mock data
-        self.transactions = [
-            {"id": 1, "account_number": "1234567890", "amount": 100.0},
-            {"id": 2, "account_number": "0987654321", "amount": 200.0},
-        ]
+        self.transactions = []
 
-    def create_transaction(self, account_number, amount):
-        transaction = {"id": len(self.transactions) + 1, "account_number": account_number, "amount": amount}
+    def create_transaction(self, transaction_id, account_number, amount):
+        transaction = {
+            "transaction_id": transaction_id,
+            "account_number": account_number,
+            "amount": amount
+        }
         self.transactions.append(transaction)
         return transaction
 
-    def get_transaction(self, transaction_id):
+    def get_transaction_details(self, transaction_id):
         for transaction in self.transactions:
-            if transaction["id"] == transaction_id:
+            if transaction["transaction_id"] == transaction_id:
                 return transaction
         return None
 
-    def list_transactions(self, account_number):
-        return [transaction for transaction in self.transactions if transaction["account_number"] == account_number]
-    
+    def update_transaction_amount(self, transaction_id, amount):
+        for transaction in self.transactions:
+            if transaction["transaction_id"] == transaction_id:
+                transaction["amount"] = amount
+                return transaction
+        return None
+
+    def delete_transaction(self, transaction_id):
+        for transaction in self.transactions:
+            if transaction["transaction_id"] == transaction_id:
+                self.transactions.remove(transaction)
+                return transaction
+        return None
+
+    def list_transactions(self):
+        return self.transactions
