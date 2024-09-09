@@ -1,6 +1,6 @@
+# tests/test_loans_service.py
 import unittest
 from app.services.loans_service import LoanService
-from app.models.loans import Loan
 
 class TestLoanService(unittest.TestCase):
     def setUp(self):
@@ -8,55 +8,109 @@ class TestLoanService(unittest.TestCase):
 
     def test_create_loan(self):
         loan_data = {
-            "account_number": "1234567890",
+            "loan_id": "loan123",
+            "account_number": "acc456",
             "amount": 1000.0,
-            "loan_type": "Personal",
-            "interest_rate": 5.0
+            "loan_type": "personal"
         }
-        self.loan_service.create_loan(**loan_data)
-        loan = Loan.filter(account_number=loan_data["account_number"]).first()
-        self.assertEqual(loan.account_number, loan_data["account_number"])
-        self.assertEqual(loan.amount, loan_data["amount"])
-        self.assertEqual(loan.loan_type, loan_data["loan_type"])
-        self.assertEqual(loan.interest_rate, loan_data["interest_rate"])
+        loan = self.loan_service.create_loan(
+            loan_data["loan_id"],
+            loan_data["account_number"],
+            loan_data["amount"],
+            loan_data["loan_type"]
+        )
+        self.assertEqual(loan["loan_id"], "loan123")
+        self.assertEqual(loan["account_number"], "acc456")
+        self.assertEqual(loan["amount"], 1000.0)
+        self.assertEqual(loan["loan_type"], "personal")
 
-    def test_get_loan(self):
+    def test_get_loan_details(self):
         loan_data = {
-            "account_number": "1234567890",
+            "loan_id": "loan123",
+            "account_number": "acc456",
             "amount": 1000.0,
-            "loan_type": "Personal",
-            "interest_rate": 5.0
+            "loan_type": "personal"
         }
-        self.loan_service.create_loan(**loan_data)
-        loan = Loan.filter(account_number=loan_data["account_number"]).first()
-        fetched_loan = self.loan_service.get_loan(loan.id)
-        self.assertEqual(fetched_loan.id, loan.id)
+        self.loan_service.create_loan(
+            loan_data["loan_id"],
+            loan_data["account_number"],
+            loan_data["amount"],
+            loan_data["loan_type"]
+        )
+        loan = self.loan_service.get_loan_details("loan123")
+        self.assertIsNotNone(loan)
+        self.assertEqual(loan["loan_id"], "loan123")
+        self.assertEqual(loan["account_number"], "acc456")
+        self.assertEqual(loan["amount"], 1000.0)
+        self.assertEqual(loan["loan_type"], "personal")
 
-    def test_list_loans(self):
+    def test_update_loan_amount(self):
         loan_data = {
-            "account_number": "1234567890",
+            "loan_id": "loan123",
+            "account_number": "acc456",
             "amount": 1000.0,
-            "loan_type": "Personal",
-            "interest_rate": 5.0
+            "loan_type": "personal"
         }
-        self.loan_service.create_loan(**loan_data)
-        loans = self.loan_service.list_loans(loan_data["account_number"])
-        self.assertEqual(len(loans), 1)
-        self.assertEqual(loans[0].account_number, loan_data["account_number"])
+        self.loan_service.create_loan(
+            loan_data["loan_id"],
+            loan_data["account_number"],
+            loan_data["amount"],
+            loan_data["loan_type"]
+        )
+        updated_loan = self.loan_service.update_loan_amount("loan123", 1500.0)
+        self.assertIsNotNone(updated_loan)
+        self.assertEqual(updated_loan["loan_id"], "loan123")
+        self.assertEqual(updated_loan["amount"], 1500.0)
 
     def test_delete_loan(self):
         loan_data = {
-            "account_number": "1234567890",
+            "loan_id": "loan123",
+            "account_number": "acc456",
             "amount": 1000.0,
-            "loan_type": "Personal",
-            "interest_rate": 5.0
+            "loan_type": "personal"
         }
-        self.loan_service.create_loan(**loan_data)
-        loan = Loan.filter(account_number=loan_data["account_number"]).first()
-        result = self.loan_service.delete_loan(loan.id)
-        self.assertTrue(result)
-        deleted_loan = self.loan_service.get_loan(loan.id)
-        self.assertIsNone(deleted_loan)
+        self.loan_service.create_loan(
+            loan_data["loan_id"],
+            loan_data["account_number"],
+            loan_data["amount"],
+            loan_data["loan_type"]
+        )
+        deleted_loan = self.loan_service.delete_loan("loan123")
+        self.assertIsNotNone(deleted_loan)
+        self.assertEqual(deleted_loan["loan_id"], "loan123")
+        self.assertEqual(deleted_loan["amount"], 1000.0)
+        self.assertEqual(deleted_loan["loan_type"], "personal")
+        self.assertIsNone(self.loan_service.get_loan_details("loan123"))
 
-if __name__ == "__main__":
+    def test_list_loans(self):
+        loan_data1 = {
+            "loan_id": "loan123",
+            "account_number": "acc456",
+            "amount": 1000.0,
+            "loan_type": "personal"
+        }
+        loan_data2 = {
+            "loan_id": "loan124",
+            "account_number": "acc457",
+            "amount": 2000.0,
+            "loan_type": "home"
+        }
+        self.loan_service.create_loan(
+            loan_data1["loan_id"],
+            loan_data1["account_number"],
+            loan_data1["amount"],
+            loan_data1["loan_type"]
+        )
+        self.loan_service.create_loan(
+            loan_data2["loan_id"],
+            loan_data2["account_number"],
+            loan_data2["amount"],
+            loan_data2["loan_type"]
+        )
+        loans = self.loan_service.list_loans()
+        self.assertEqual(len(loans), 2)
+        self.assertEqual(loans[0]["loan_id"], "loan123")
+        self.assertEqual(loans[1]["loan_id"], "loan124")
+
+if __name__ == '__main__':
     unittest.main()

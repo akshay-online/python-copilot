@@ -1,29 +1,37 @@
-from models.loans import Loan
-
+# app/services/loan_service.py
 class LoanService:
-    # existing methods...
+    def __init__(self):
+        self.loans = []
 
-    def create_loan(self, account_number, amount, loan_type, interest_rate):
-        # Create a new loan transaction
-        loan = Loan(account_number, amount, loan_type, interest_rate)
-        # Save the loan to the database
-        loan.save()
-
-    def get_loan(self, loan_id):
-        # Get the loan details from the database
-        loan = Loan.get(loan_id)
+    def create_loan(self, loan_id, account_number, amount, loan_type):
+        loan = {
+            "loan_id": loan_id,
+            "account_number": account_number,
+            "amount": amount,
+            "loan_type": loan_type
+        }
+        self.loans.append(loan)
         return loan
 
-    def list_loans(self, account_number):
-        # Get all loans for the specified account from the database
-        loans = Loan.filter(account_number=account_number)
-        return loans
-    
+    def get_loan_details(self, loan_id):
+        for loan in self.loans:
+            if loan["loan_id"] == loan_id:
+                return loan
+        return None
+
+    def update_loan_amount(self, loan_id, amount):
+        for loan in self.loans:
+            if loan["loan_id"] == loan_id:
+                loan["amount"] = amount
+                return loan
+        return None
+
     def delete_loan(self, loan_id):
-        # Delete the loan from the database
-        loan = Loan.get(loan_id)
-        if loan:
-            loan.delete()
-            return True
-        else:
-            return False
+        for loan in self.loans:
+            if loan["loan_id"] == loan_id:
+                self.loans.remove(loan)
+                return loan
+        return None
+
+    def list_loans(self):
+        return self.loans
