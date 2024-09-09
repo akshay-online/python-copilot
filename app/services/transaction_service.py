@@ -1,6 +1,4 @@
 # app/services/transaction_service.py
-from app.models.transaction import Transaction
-
 class TransactionService:
     def __init__(self):
         self.transactions = []
