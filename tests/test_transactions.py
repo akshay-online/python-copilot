@@ -1,5 +1,5 @@
 import unittest
-from app.models.transaction import Transaction
+from models.transaction import Transaction
 from app.services.transaction_service import TransactionService
 
 class TestTransactionService(unittest.TestCase):

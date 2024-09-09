@@ -1,5 +1,5 @@
 import unittest
-from app.models.account import Account
+from models.account import Account
 from app.services.account_service import AccountService
 
 class TestAccountAPI(unittest.TestCase):
