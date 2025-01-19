@@ -57,3 +57,11 @@ write unit tests for all the operations in #file:calculator.py
 example:
 def test_add():
     assert calculator('add', 10, 5) == 15
+
+====================
+
+Copilot workspace
+
+In the home page add the h1 text Quiz App and provide the navigation hyperlink to add questions page (Quiz/AddQuestion)
+
+In AddQuestion page make the question text as text area. Align all the items left side of column 8 and on the right column 4, side show the preview of what data has entered with question in Bold and options with bullets.
