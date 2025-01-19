@@ -1,0 +1,59 @@
+
+# Write a function to get the latest commits from a GitHub repository
+# using the GitHub API.
+# write the committer name and commit message into an excel file in one sheet
+
+
+PM
+
+Help me with functional and nonfunctional requirements 
+for the given high level requirements
+
+Get the list of stories and tasks for the functional requirements above
+
+Dev Usecase
+=====================
+Code Generation
+
+- Looks like file has some dummy logic. Can you update the logic to use SQL sever?
+- Explain generated Code
+- #file:OrderProcessingService.py refactor the code us repository pattern using class and interfaces
+- Identify bugs or vulnerabilities
+- Generate test cases using pytest | unittest
+- /tests Generate test data for the same
+- #codebase search for withdrawal related functions in the repository.
+
+- @workspace how to run the project
+- @workspace /new Write an e-commerce API application with the following - CRUD Operations using SQL Server on products, orders, order details, customers - Using python and Swagger integration Develop application with mock data and create the script to deploy infrastructure on azure using terraform and application using GitHub Actions
+
+- @terminal 
+	Create a PowerShell script that remotely restarts a server. 
+    The script should take the server name as a parameter, restart the server, and log the success or failure to a log file located at C:\Logs\server_restart.log. Include error handling to log any issues
+    	#terminalLastCommand 
+        #terminalSelection 
+- @workspace - generate project documentation
+====================
+
+- Code review and comment
+- Copilot edits
+
+=====================
+CLI
+
+=====================
+Prompt engineering PPT
+	
+		1. Simple prompt - # Read a file in Python | Python
+# Create a Python function named 'read_file' that opens a file, reads its contents, and returns it as a string. Handle errors if the file doesn't exist or is unreadable.
+	
+		1. // Function to perform CRUD operations on a database | NodeJS
+// Write a Node.js function named 'performCRUD' to handle CRUD operations (Create, Read, Update, Delete) on a MongoDB collection named 'users'. Ensure to handle errors, use async/await, and return appropriate messages for each operation.
+
+# zero shot
+write unit tests for all the operations in #file:calculator.py
+
+# one shot
+write unit tests for all the operations in #file:calculator.py
+example:
+def test_add():
+    assert calculator('add', 10, 5) == 15
