@@ -15,10 +15,10 @@ Dev Usecase
 =====================
 Code Generation
 
-- Looks like file has some dummy logic. Can you update the logic to use SQL sever?
+- Looks like file has some dummy logic. Can you update the logic to use MS SQL sever?
 - Explain generated Code
-- #file:OrderProcessingService.py refactor the code us repository pattern using class and interfaces
-- Identify bugs or vulnerabilities
+- #file:OrderProcessingService refactor the code to use repository pattern using different class and interfaces files
+- identify if there are any bugs or vulnerabilities
 - Generate test cases using pytest | unittest
 - /tests Generate test data for the same
 - #codebase search for withdrawal related functions in the repository.
