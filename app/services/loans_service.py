@@ -1,29 +1,37 @@
 from models.loans import Loan
 
 class LoanService:
-    # existing methods...
-
     def create_loan(self, account_number, amount, loan_type, interest_rate):
-        # Create a new loan transaction
-        loan = Loan(account_number, amount, loan_type, interest_rate)
-        # Save the loan to the database
-        loan.save()
+        try:
+            loan = Loan(account_number, amount, loan_type, interest_rate)
+            loan.save()
+        except Exception as e:
+            print(f"Error creating loan: {e}")
 
     def get_loan(self, loan_id):
-        # Get the loan details from the database
-        loan = Loan.get(loan_id)
-        return loan
+        try:
+            loan = Loan.get(loan_id)
+            return loan
+        except Exception as e:
+            print(f"Error fetching loan: {e}")
+            return None
 
     def list_loans(self, account_number):
-        # Get all loans for the specified account from the database
-        loans = Loan.filter(account_number=account_number)
-        return loans
-    
+        try:
+            loans = Loan.filter(account_number=account_number)
+            return loans
+        except Exception as e:
+            print(f"Error listing loans: {e}")
+            return []
+
     def delete_loan(self, loan_id):
-        # Delete the loan from the database
-        loan = Loan.get(loan_id)
-        if loan:
-            loan.delete()
-            return True
-        else:
+        try:
+            loan = Loan.get(loan_id)
+            if loan:
+                loan.delete()
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(f"Error deleting loan: {e}")
             return False

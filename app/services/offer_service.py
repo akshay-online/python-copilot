@@ -9,10 +9,18 @@ class OfferService:
         ]
 
     def get_all_offers(self):
-        return self.offers
+        try:
+            return self.offers
+        except Exception as e:
+            print(f"Error fetching all offers: {e}")
+            return []
 
     def get_offer(self, offer_id):
-        for offer in self.offers:
-            if offer["id"] == offer_id:
-                return offer
-        return None
+        try:
+            for offer in self.offers:
+                if offer["id"] == offer_id:
+                    return offer
+            return None
+        except Exception as e:
+            print(f"Error fetching offer: {e}")
+            return None
