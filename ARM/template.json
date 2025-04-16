@@ -1,0 +1,218 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Virtual Network."
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the subnet for Azure Bastion."
+            }
+        },
+        "bastionName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Azure Bastion resource."
+            }
+        },
+        "vmAdminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin username for the virtual machines."
+            }
+        },
+        "vmAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password for the virtual machines."
+            }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Azure Key Vault."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Azure Storage Account."
+            }
+        }
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/virtualNetworks",
+        "apiVersion": "2020-06-01",
+        "name": "[parameters('virtualNetworkName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": ["10.0.0.0/16"]
+          },
+          "subnets": [
+            {
+              "name": "[parameters('subnetName')]",
+              "properties": {
+                "addressPrefix": "10.0.0.0/24"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Network/bastionHosts",
+        "apiVersion": "2020-05-01",
+        "name": "[parameters('bastionName')]",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+        ],
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "bastionIPConfig",
+              "properties": {
+                "subnet": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]"
+                },
+                "publicIPAddress": {
+                  "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'bastionPublicIP')]"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Network/publicIPAddresses",
+        "apiVersion": "2020-06-01",
+        "name": "bastionPublicIP",
+        "location": "[parameters('location')]",
+        "properties": {
+          "publicIPAllocationMethod": "Static",
+          "sku": {
+            "name": "Standard"
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "apiVersion": "2021-03-01",
+        "name": "ad-armin30-lab",
+        "location": "[parameters('location')]",
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "Standard_DS1_v2"
+          },
+          "osProfile": {
+            "computerName": "ad-armin30-lab",
+            "adminUsername": "[parameters('vmAdminUsername')]",
+            "adminPassword": "[parameters('vmAdminPassword')]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "MicrosoftWindowsServer",
+              "offer": "WindowsServer",
+              "sku": "2019-Datacenter",
+              "version": "latest"
+            },
+            "osDisk": {
+              "createOption": "FromImage"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', 'ad-armin30-lab-nic')]"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "apiVersion": "2021-03-01",
+        "name": "n01-armin30-lab",
+        "location": "[parameters('location')]",
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "Standard_DS1_v2"
+          },
+          "osProfile": {
+            "computerName": "n01-armin30-lab",
+            "adminUsername": "[parameters('vmAdminUsername')]",
+            "adminPassword": "[parameters('vmAdminPassword')]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "MicrosoftWindowsServer",
+              "offer": "WindowsServer",
+              "sku": "2019-Datacenter",
+              "version": "latest"
+            },
+            "osDisk": {
+              "createOption": "FromImage"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', 'n01-armin30-lab-nic')]"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2019-06-01",
+        "name": "[parameters('storageAccountName')]",
+        "location": "[parameters('location')]",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "StorageV2",
+        "properties": {}
+      },
+      {
+        "type": "Microsoft.KeyVault/vaults",
+        "apiVersion": "2019-09-01",
+        "name": "[parameters('keyVaultName')]",
+        "location": "[parameters('location')]",
+        "properties": {
+          "sku": {
+            "family": "A",
+            "name": "standard"
+          },
+          "tenantId": "[subscription().tenantId]",
+          "accessPolicies": []
+        }
+      }
+    ],
+    "outputs": {
+      "bastionHostName": {
+        "type": "string",
+        "value": "[parameters('bastionName')]"
+      },
+      "storageAccountName": {
+        "type": "string",
+        "value": "[parameters('storageAccountName')]"
+      },
+      "keyVaultName": {
+        "type": "string",
+        "value": "[parameters('keyVaultName')]"
+      }
+    }
+}

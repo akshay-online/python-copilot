@@ -1,0 +1,31 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  azureSubscription: '<Your-Azure-Service-Connection-Name>'
+  resourceGroupName: 'banking-api-resources'
+  location: 'eastus'
+
+stages:
+- stage: Deploy
+  displayName: 'Deploy ARM Template'
+  jobs:
+  - job: DeployResources
+    displayName: 'Deploy Azure Resources'
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      displayName: 'Deploy ARM Template'
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: '$(azureSubscription)'
+        subscriptionId: '<Your-Subscription-ID>'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: '$(resourceGroupName)'
+        location: '$(location)'
+        templateLocation: 'Linked artifact'
+        csmFile: 'ARM/template.json'
+        csmParametersFile: 'ARM/parameters.json'
+        deploymentMode: 'Incremental'

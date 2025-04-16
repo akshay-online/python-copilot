@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "eastus"
+    },
+    "virtualNetworkName": {
+      "value": "vnet-armin30"
+    },
+    "subnetName": {
+      "value": "AzureBastionSubnet"
+    },
+    "bastionName": {
+      "value": "AzureBastion"
+    },
+    "vmAdminUsername": {
+      "value": "adminUser"
+    },
+    "vmAdminPassword": {
+      "value": "SecurePassword123!"
+    },
+    "keyVaultName": {
+      "value": "keyvault-armin30"
+    },
+    "storageAccountName": {
+      "value": "storagearmin30"
+    }
+  }
+}
