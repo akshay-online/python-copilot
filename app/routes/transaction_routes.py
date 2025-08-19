@@ -3,6 +3,7 @@ from models.transaction import Transaction
 from services.deposit_service import DepositService
 from services.transaction_service import TransactionService
 from services.withdrawal_service import WithdrawalService
+from services.upi_service import UPIService
 from flask import Blueprint, request, jsonify
 from models.transaction import Transaction
 
@@ -13,6 +14,7 @@ transaction_routes = Blueprint('transaction_routes', __name__)
 transaction_service = TransactionService()
 withdrawal_service = WithdrawalService()
 deposit_service = DepositService()
+upi_service = UPIService()
 
 @transaction_routes.route('/transactions', methods=['POST'])
 @swag_from({
@@ -525,3 +527,63 @@ def list_deposits():
     account_number = request.args.get('account_number')
     transactions = deposit_service.list_deposits(account_number)
     return jsonify([transaction.__dict__ for transaction in transactions])
+
+
+# UPI payment routes
+@transaction_routes.route('/transactions/upi', methods=['GET'])
+@swag_from({
+    'tags': ['Transactions'],
+    'description': 'Get all UPI payment details',
+    'parameters': [
+        {
+            'name': 'account_number',
+            'in': 'query',
+            'required': False,
+            'type': 'string',
+            'description': 'Filter UPI payments by account number'
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'List of UPI payment details',
+            'schema': {
+                'type': 'array',
+                'items': {
+                    'type': 'object',
+                    'properties': {
+                        'id': {
+                            'type': 'integer',
+                            'description': 'UPI payment ID'
+                        },
+                        'account_number': {
+                            'type': 'string',
+                            'description': 'The account number'
+                        },
+                        'amount': {
+                            'type': 'number',
+                            'description': 'The payment amount'
+                        },
+                        'upi_id': {
+                            'type': 'string',
+                            'description': 'The UPI ID used for payment'
+                        },
+                        'type': {
+                            'type': 'string',
+                            'description': 'The transaction type (upi)'
+                        }
+                    }
+                }
+            }
+        }
+    }
+})
+def get_all_upi_payments():
+    """
+    Get all UPI payment details.
+
+    Returns:
+        A JSON response with a list of all UPI payment details.
+    """
+    account_number = request.args.get('account_number')
+    upi_payments = upi_service.list_upi_payments(account_number)
+    return jsonify(upi_payments)
