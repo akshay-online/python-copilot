@@ -587,3 +587,75 @@ def get_all_upi_payments():
     account_number = request.args.get('account_number')
     upi_payments = upi_service.list_upi_payments(account_number)
     return jsonify(upi_payments)
+
+
+# P2P UPI payment routes
+@transaction_routes.route('/transactions/upi/p2p', methods=['GET'])
+@swag_from({
+    'tags': ['Transactions'],
+    'description': 'Get all P2P UPI payment details',
+    'parameters': [
+        {
+            'name': 'account_number',
+            'in': 'query',
+            'required': False,
+            'type': 'string',
+            'description': 'Filter P2P UPI payments by account number'
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'List of P2P UPI payment details',
+            'schema': {
+                'type': 'array',
+                'items': {
+                    'type': 'object',
+                    'properties': {
+                        'id': {
+                            'type': 'integer',
+                            'description': 'UPI payment ID'
+                        },
+                        'account_number': {
+                            'type': 'string',
+                            'description': 'The account number'
+                        },
+                        'amount': {
+                            'type': 'number',
+                            'description': 'The payment amount'
+                        },
+                        'upi_id': {
+                            'type': 'string',
+                            'description': 'The UPI ID used for payment'
+                        },
+                        'recipient_upi': {
+                            'type': 'string',
+                            'description': 'The recipient UPI ID'
+                        },
+                        'description': {
+                            'type': 'string',
+                            'description': 'Payment description'
+                        },
+                        'upi_category': {
+                            'type': 'string',
+                            'description': 'The UPI transaction category (p2p)'
+                        },
+                        'type': {
+                            'type': 'string',
+                            'description': 'The transaction type (upi)'
+                        }
+                    }
+                }
+            }
+        }
+    }
+})
+def get_all_p2p_upi_payments():
+    """
+    Get all P2P UPI payment details.
+
+    Returns:
+        A JSON response with a list of all P2P UPI payment details.
+    """
+    account_number = request.args.get('account_number')
+    p2p_payments = upi_service.list_p2p_upi_payments(account_number)
+    return jsonify(p2p_payments)

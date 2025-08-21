@@ -14,7 +14,7 @@ class TestUPIService(unittest.TestCase):
     def test_list_all_upi_payments(self):
         """Test listing all UPI payments without account filter"""
         upi_payments = self.upi_service.list_upi_payments()
-        self.assertEqual(len(upi_payments), 3)  # Should return all 3 default payments
+        self.assertEqual(len(upi_payments), 5)  # Should return all 5 default payments
         
         # Check if all payments have required fields
         for payment in upi_payments:
@@ -68,6 +68,26 @@ class TestUPIService(unittest.TestCase):
         
         # Check that the payment was added to the list
         self.assertEqual(len(self.upi_service.upi_payments), initial_count + 1)
+
+    def test_list_all_p2p_upi_payments(self):
+        """Test listing all P2P UPI payments without account filter"""
+        p2p_payments = self.upi_service.list_p2p_upi_payments()
+        
+        # Should return only P2P payments
+        for payment in p2p_payments:
+            self.assertEqual(payment['upi_category'], 'p2p')
+            self.assertIn('recipient_upi', payment)
+            self.assertIn('description', payment)
+
+    def test_list_p2p_upi_payments_by_account(self):
+        """Test listing P2P UPI payments filtered by account number"""
+        account_number = "1234567890"
+        p2p_payments = self.upi_service.list_p2p_upi_payments(account_number)
+        
+        # Should return only P2P payments for this account
+        for payment in p2p_payments:
+            self.assertEqual(payment['account_number'], account_number)
+            self.assertEqual(payment['upi_category'], 'p2p')
 
 if __name__ == "__main__":
     unittest.main()
