@@ -525,3 +525,95 @@ def list_deposits():
     account_number = request.args.get('account_number')
     transactions = deposit_service.list_deposits(account_number)
     return jsonify([transaction.__dict__ for transaction in transactions])
+
+@transaction_routes.route('/transactions/monthly', methods=['GET'])
+@swag_from({
+    'tags': ['Transactions'],
+    'description': 'Get all transactions for a specific month and year',
+    'parameters': [
+        {
+            'name': 'year',
+            'in': 'query',
+            'required': True,
+            'type': 'integer',
+            'description': 'The year to filter transactions (e.g., 2025)'
+        },
+        {
+            'name': 'month',
+            'in': 'query',
+            'required': True,
+            'type': 'integer',
+            'description': 'The month to filter transactions (1-12)'
+        },
+        {
+            'name': 'account_number',
+            'in': 'query',
+            'required': False,
+            'type': 'string',
+            'description': 'Optional: Filter by account number'
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'List of transactions for the specified month',
+            'schema': {
+                'type': 'array',
+                'items': {
+                    'type': 'object',
+                    'properties': {
+                        'id': {
+                            'type': 'integer',
+                            'description': 'Transaction ID'
+                        },
+                        'account_number': {
+                            'type': 'string',
+                            'description': 'The account number'
+                        },
+                        'amount': {
+                            'type': 'number',
+                            'description': 'The transaction amount'
+                        },
+                        'timestamp': {
+                            'type': 'string',
+                            'description': 'Transaction timestamp in ISO format'
+                        }
+                    }
+                }
+            }
+        },
+        '400': {
+            'description': 'Invalid parameters',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'error': {
+                        'type': 'string',
+                        'description': 'Error message'
+                    }
+                }
+            }
+        }
+    }
+})
+def get_monthly_transactions():
+    """
+    Get all transactions for a specific month and year.
+    
+    Returns:
+        A JSON response with a list of transactions for the specified month.
+    """
+    try:
+        year = request.args.get('year', type=int)
+        month = request.args.get('month', type=int)
+        account_number = request.args.get('account_number')
+        
+        if year is None or month is None:
+            return jsonify({'error': 'Year and month parameters are required'}), 400
+        
+        if month < 1 or month > 12:
+            return jsonify({'error': 'Month must be between 1 and 12'}), 400
+        
+        transactions = transaction_service.get_transactions_by_month(year, month, account_number)
+        return jsonify(transactions)
+    except ValueError:
+        return jsonify({'error': 'Invalid year or month format'}), 400
