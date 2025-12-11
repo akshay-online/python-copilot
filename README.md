@@ -2,6 +2,36 @@
 
 This project is a Python API for banking transactions. It provides endpoints for managing bank accounts, loans, offers, and performing transactions.
 
+---
+
+## 📚 Library Management System (C#) - NEW!
+
+**Looking for the Library Management System documentation?** We've created a comprehensive MVP plan for building a Library Management app using C# and ASP.NET Core!
+
+### 🚀 Quick Links
+- **[START HERE: Documentation Index](DOCUMENTATION_INDEX.md)** - Master guide to all documentation
+- **[MVP Plan](LIBRARY_MANAGEMENT_MVP_PLAN.md)** - Complete project specification
+- **[Quick Start](QUICK_START_GUIDE.md)** - Get started in 5 minutes
+- **[Setup Guide](SETUP_INSTRUCTIONS.md)** - Detailed setup instructions
+- **[API Reference](API_REFERENCE.md)** - All API endpoints
+- **[Architecture](ARCHITECTURE.md)** - Design patterns and best practices
+- **[FAQ](FAQ.md)** - Common questions and answers
+
+### 📊 What's Included
+- ✅ **~150 pages** of comprehensive documentation
+- ✅ **125+ code examples** ready to use
+- ✅ **Complete MVP plan** with 5-week timeline
+- ✅ **ASP.NET Core Web API** implementation guide
+- ✅ **Clean Architecture** pattern
+- ✅ **Entity Framework Core** with SQL Server/SQLite
+- ✅ **Full API documentation** with Swagger
+- ✅ **Testing strategies** and examples
+- ✅ **Deployment guides** (IIS, Azure, Docker)
+
+**Perfect for:** Building a production-ready Library Management System from scratch!
+
+---
+
 ## Project Structure
 ```plaintext
 ├── app/
