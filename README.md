@@ -1,6 +1,58 @@
 # Banking API
 
-This project is a Python API for banking transactions. It provides endpoints for managing bank accounts, loans, offers, and performing transactions.
+This project is a Python API for banking transactions. It provides endpoints for managing bank accounts, loans, offers, and performing transactions, **including UPI transaction tracking with daily count monitoring**.
+
+## New Feature: UPI Transaction Count Tracking 📱💰
+
+The API now supports UPI (Unified Payments Interface) transactions with comprehensive daily tracking:
+
+### Features
+- **Create UPI transactions** with sender and recipient UPI IDs
+- **Track daily transaction count** per account automatically  
+- **Get real-time count** of UPI transactions for any account on any date
+- **Daily summary** with transaction count, total amount, and transaction details
+- **Historical tracking** with date-specific queries
+
+### UPI API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/transactions/upi` | Create a new UPI transaction |
+| `GET` | `/transactions/upi/<id>` | Get UPI transaction by ID |
+| `GET` | `/transactions/upi?account_number=<num>` | List UPI transactions for account |
+| `GET` | `/transactions/upi/count/<account_number>` | Get daily UPI transaction count |
+| `GET` | `/transactions/upi/summary/<account_number>` | Get daily summary with count and total amount |
+
+### Example Usage
+
+**Create UPI Transaction:**
+```bash
+POST /transactions/upi
+{
+  "account_number": "1234567890",
+  "amount": 500.0,
+  "upi_id": "user@paytm",
+  "recipient_upi": "merchant@gpay"
+}
+```
+
+**Get Daily Count:**
+```bash
+GET /transactions/upi/count/1234567890?date=2026-01-06
+# Response: {"account_number": "1234567890", "date": "2026-01-06", "upi_transaction_count": 5}
+```
+
+**Get Daily Summary:**
+```bash
+GET /transactions/upi/summary/1234567890
+# Response includes: transaction_count, total_amount, and list of transactions
+```
+
+### Demo Script
+Run the demo to see UPI tracking in action:
+```bash
+python demo_upi_tracking.py
+```
 
 ## Project Structure
 ```plaintext
@@ -12,23 +64,26 @@ This project is a Python API for banking transactions. It provides endpoints for
 │   │   ├── account.py
 │   │   ├── loans.py
 │   │   ├── offer.py
-│   │   └── transaction.py
+│   │   └── transaction.py          # 🆕 Now includes UPITransaction class
 │   ├── routes/
 │   │   ├── __init__.py
 │   │   ├── account_routes.py
 │   │   ├── loans_routes.py
 │   │   ├── offer_routes.py
-│   │   └── transaction_routes.py
+│   │   └── transaction_routes.py   # 🆕 Now includes UPI endpoints
 │   └── services/
 │       ├── __init__.py
 │       ├── account_service.py
 │       ├── loans_service.py
 │       ├── offer_service.py
-│       └── transaction_service.py
+│       ├── transaction_service.py
+│       └── upi_service.py          # 🆕 New UPI service for tracking
 ├── tests/
 │   ├── __init__.py
 │   ├── test_accounts.py
-│   └── test_transactions.py
+│   ├── test_transactions.py
+│   └── test_upi_transactions.py    # 🆕 Comprehensive UPI tests
+├── demo_upi_tracking.py            # 🆕 Interactive demo script
 ├── config.py
 ├── requirements.txt
 ├── .gitignore
@@ -87,3 +142,5 @@ Contributions are welcome! If you find any issues or have suggestions for improv
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Authors

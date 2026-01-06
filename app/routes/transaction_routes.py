@@ -3,6 +3,7 @@ from models.transaction import Transaction
 from services.deposit_service import DepositService
 from services.transaction_service import TransactionService
 from services.withdrawal_service import WithdrawalService
+from services.upi_service import UPIService
 from flask import Blueprint, request, jsonify
 from models.transaction import Transaction
 
@@ -13,6 +14,7 @@ transaction_routes = Blueprint('transaction_routes', __name__)
 transaction_service = TransactionService()
 withdrawal_service = WithdrawalService()
 deposit_service = DepositService()
+upi_service = UPIService()
 
 @transaction_routes.route('/transactions', methods=['POST'])
 @swag_from({
@@ -525,3 +527,214 @@ def list_deposits():
     account_number = request.args.get('account_number')
     transactions = deposit_service.list_deposits(account_number)
     return jsonify([transaction.__dict__ for transaction in transactions])
+
+
+# UPI Transaction Routes
+@transaction_routes.route('/transactions/upi', methods=['POST'])
+@swag_from({
+    'tags': ['UPI Transactions'],
+    'description': 'Create a new UPI transaction',
+    'parameters': [
+        {
+            'name': 'body',
+            'in': 'body',
+            'required': True,
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'account_number': {
+                        'type': 'string',
+                        'description': 'The account number'
+                    },
+                    'amount': {
+                        'type': 'number',
+                        'description': 'The transaction amount'
+                    },
+                    'upi_id': {
+                        'type': 'string',
+                        'description': 'The sender UPI ID'
+                    },
+                    'recipient_upi': {
+                        'type': 'string',
+                        'description': 'The recipient UPI ID'
+                    }
+                },
+                'required': ['account_number', 'amount', 'upi_id', 'recipient_upi']
+            }
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'UPI transaction created successfully',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'message': {'type': 'string'},
+                    'transaction': {'type': 'object'},
+                    'daily_count': {'type': 'integer'}
+                }
+            }
+        }
+    }
+})
+def create_upi_transaction():
+    """Create a new UPI transaction and track daily count"""
+    data = request.get_json()
+    transaction = upi_service.create_upi_transaction(
+        data['account_number'], 
+        data['amount'], 
+        data['upi_id'], 
+        data['recipient_upi']
+    )
+    daily_count = upi_service.get_daily_upi_count(data['account_number'])
+    
+    return jsonify({
+        'message': 'UPI transaction created successfully',
+        'transaction': transaction,
+        'daily_count': daily_count
+    })
+
+
+@transaction_routes.route('/transactions/upi/<int:transaction_id>', methods=['GET'])
+@swag_from({
+    'tags': ['UPI Transactions'],
+    'description': 'Get a UPI transaction by ID',
+    'parameters': [
+        {
+            'name': 'transaction_id',
+            'in': 'path',
+            'required': True,
+            'type': 'integer',
+            'description': 'The UPI transaction ID'
+        }
+    ],
+    'responses': {
+        '200': {'description': 'UPI transaction details'},
+        '404': {'description': 'UPI transaction not found'}
+    }
+})
+def get_upi_transaction(transaction_id):
+    """Get UPI transaction by ID"""
+    transaction = upi_service.get_upi_transaction(transaction_id)
+    if transaction:
+        return jsonify(transaction)
+    return jsonify({'message': 'UPI transaction not found'}), 404
+
+
+@transaction_routes.route('/transactions/upi', methods=['GET'])
+@swag_from({
+    'tags': ['UPI Transactions'],
+    'description': 'List UPI transactions for an account',
+    'parameters': [
+        {
+            'name': 'account_number',
+            'in': 'query',
+            'required': True,
+            'type': 'string',
+            'description': 'The account number'
+        }
+    ],
+    'responses': {
+        '200': {'description': 'List of UPI transactions'}
+    }
+})
+def list_upi_transactions():
+    """List UPI transactions for an account"""
+    account_number = request.args.get('account_number')
+    if not account_number:
+        return jsonify({'message': 'account_number is required'}), 400
+    
+    transactions = upi_service.list_upi_transactions(account_number)
+    return jsonify(transactions)
+
+
+@transaction_routes.route('/transactions/upi/count/<account_number>', methods=['GET'])
+@swag_from({
+    'tags': ['UPI Transactions'],
+    'description': 'Get daily UPI transaction count for an account',
+    'parameters': [
+        {
+            'name': 'account_number',
+            'in': 'path',
+            'required': True,
+            'type': 'string',
+            'description': 'The account number'
+        },
+        {
+            'name': 'date',
+            'in': 'query',
+            'required': False,
+            'type': 'string',
+            'description': 'Date in YYYY-MM-DD format (defaults to today)'
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'UPI transaction count',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'account_number': {'type': 'string'},
+                    'date': {'type': 'string'},
+                    'upi_transaction_count': {'type': 'integer'}
+                }
+            }
+        }
+    }
+})
+def get_upi_transaction_count(account_number):
+    """Get daily UPI transaction count for an account"""
+    date_str = request.args.get('date')
+    count = upi_service.get_daily_upi_count(account_number, date_str)
+    
+    from datetime import date
+    target_date = date_str if date_str else date.today().isoformat()
+    
+    return jsonify({
+        'account_number': account_number,
+        'date': target_date,
+        'upi_transaction_count': count
+    })
+
+
+@transaction_routes.route('/transactions/upi/summary/<account_number>', methods=['GET'])
+@swag_from({
+    'tags': ['UPI Transactions'],
+    'description': 'Get daily UPI transaction summary for an account',
+    'parameters': [
+        {
+            'name': 'account_number',
+            'in': 'path',
+            'required': True,
+            'type': 'string',
+            'description': 'The account number'
+        },
+        {
+            'name': 'date',
+            'in': 'query',
+            'required': False,
+            'type': 'string',
+            'description': 'Date in YYYY-MM-DD format (defaults to today)'
+        }
+    ],
+    'responses': {
+        '200': {
+            'description': 'Daily UPI transaction summary',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'account_number': {'type': 'string'},
+                    'date': {'type': 'string'},
+                    'transaction_count': {'type': 'integer'},
+                    'total_amount': {'type': 'number'},
+                    'transactions': {'type': 'array'}
+                }
+            }
+        }
+    }
+})
+def get_upi_daily_summary(account_number):
+    """Get daily UPI transaction summary for an account"""
+    date_str = request.args.get('date')
+    summary = upi_service.get_account_daily_summary(account_number, date_str)
+    return jsonify(summary)
