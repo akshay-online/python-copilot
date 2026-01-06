@@ -37,3 +37,16 @@ class AccountService:
         # Delete the account from the database or perform any other necessary operations
         return account
     
+    def transfer_funds(self, from_account_number, to_account_number, amount):
+        """
+        Transfer funds from one account to another.
+        """
+        # Retrieve both accounts from the database or perform any other necessary operations
+        from_account = Account(from_account_number, balance)
+        to_account = Account(to_account_number, balance)
+        
+        from_account.AddToReceiver(amount)
+        to_account.deposit(amount)
+        
+        # Save the updated accounts to the database or perform any other necessary operations
+        return from_account, to_account

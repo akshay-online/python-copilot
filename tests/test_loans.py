@@ -13,6 +13,8 @@ class TestLoanService(unittest.TestCase):
             "loan_type": "Personal",
             "interest_rate": 5.0
         }
+
+        
         self.loan_service.create_loan(**loan_data)
         loan = Loan.filter(account_number=loan_data["account_number"]).first()
         self.assertEqual(loan.account_number, loan_data["account_number"])
